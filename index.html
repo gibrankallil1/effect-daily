@@ -313,7 +313,7 @@ textarea.comment-input::placeholder{color:var(--muted)}
     <div class="divider"></div>
     <div class="section-label">// Relatório D+1</div>
     <div class="report-grid">
-      <div class="report-field invest-field"><label>💰 Investimento Tráfego (R$)</label><input type="number" id="sdr-invest" placeholder="0" min="0" oninput="calcCPR('sdr');calcMQL('sdr')"></div>
+
       <div class="report-field"><label>Ligações feitas</label><input type="number" id="sdr-ligacoes" placeholder="0" min="0"></div>
       <div class="report-field"><label>Leads gerados (bruto)</label><input type="number" id="sdr-leads" placeholder="0" min="0" oninput="calcMQL('sdr')"></div>
       <div class="report-field"><label>Leads qualificados (MQL)</label><input type="number" id="sdr-mql" placeholder="0" min="0" oninput="calcMQL('sdr')"></div>
@@ -340,7 +340,7 @@ textarea.comment-input::placeholder{color:var(--muted)}
     <div class="divider"></div>
     <div class="section-label">// Relatório D+1</div>
     <div class="report-grid">
-      <div class="report-field invest-field"><label>💰 Investimento Tráfego (R$)</label><input type="number" id="social-invest" placeholder="0" min="0" oninput="calcCPR('social');calcMQL('social')"></div>
+
       <div class="report-field"><label>Seguidores novos (bruto)</label><input type="number" id="social-leads" placeholder="0" min="0" oninput="calcMQL('social')"></div>
       <div class="report-field"><label>Seguidores qualificados (MQL)</label><input type="number" id="social-mql" placeholder="0" min="0" oninput="calcMQL('social')"></div>
       <div class="report-field"><label>Seguidores desqualificados</label><input type="number" id="social-desq" placeholder="0" min="0"></div>
@@ -366,6 +366,7 @@ textarea.comment-input::placeholder{color:var(--muted)}
     <div class="divider"></div>
     <div class="section-label">// Métricas do Dia</div>
     <div class="report-grid">
+      <div class="report-field invest-field"><label>💰 Investimento Tráfego (R$)</label><input type="number" id="gt-invest" placeholder="0" min="0" oninput="calcCPR('gt');calcMQL('gt')"></div>
       <div class="report-field"><label>Gasto do dia anterior (R$)</label><input type="number" id="gt-gasto" placeholder="0" min="0"></div>
       <div class="report-field"><label>Leads gerados dia anterior</label><input type="number" id="gt-leads" placeholder="0" min="0"></div>
     </div>
@@ -505,13 +506,10 @@ const LISTS={
     {id:'g1',title:'Campanhas revisadas',sub:'Verificar todas as campanhas ativas'},
     {id:'g2',title:'Gasto do dia anterior registrado',sub:'Verificar e anotar gasto total ontem'},
     {id:'g3',title:'Leads gerados dia anterior registrados',sub:'Verificar e anotar total de leads ontem'},
-    {id:'g4',title:'Mensagens dos clientes respondidas',sub:'Resposta em até 2h no horário comercial'},
-    {id:'g5',title:'Demandas registradas na Central',sub:'Nenhuma demanda fora do Notion'},
-    {id:'g6',title:'Reunião semanal participada (segunda)',sub:'Apenas às segundas'},
-    {id:'g7',title:'Health Check atualizado (sexta)',sub:'Apenas às sextas — até 18h'},
+
   ],
 };
-const FIELDS={closer:['propostas','fechamentos','valor','pago','origem','primeiro_contato'],sdr:['invest','ligacoes','leads','mql','desq','agendadas','noshow','cancelamentos','remarcacoes'],social:['invest','leads','mql','desq','agendadas','noshow','cancelamentos','remarcacoes'],gt:['gasto','leads']};
+const FIELDS={closer:['propostas','fechamentos','valor','pago','origem','primeiro_contato'],sdr:['ligacoes','leads','mql','desq','agendadas','noshow','cancelamentos','remarcacoes'],social:['leads','mql','desq','agendadas','noshow','cancelamentos','remarcacoes'],gt:['invest','gasto','leads']};
 
 // Default metas
 const META_DEFAULTS={closer:{fechamentos:3,valor:5000},sdr:{leads:10,agendadas:5},social:{leads:8,agendadas:3}};
