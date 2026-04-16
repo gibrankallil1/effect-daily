@@ -75,13 +75,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .progress-count{font-size:12px;color:var(--muted);white-space:nowrap}
 .progress-pct{font-family:'Playfair Display',serif;font-weight:700;font-size:16px;min-width:42px;text-align:right;transition:color .3s}
 
-/* ── METAS BANNER ── */
-.metas-banner{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:20px}
-.meta-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center}
-.meta-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
-.meta-val{font-family:'Playfair Display',serif;font-size:16px;font-weight:700}
-.meta-progress{height:2px;background:var(--border2);border-radius:1px;margin-top:5px;overflow:hidden}
-.meta-fill{height:100%;border-radius:1px;transition:width .4s ease}
+
 
 /* ── SECTION ── */
 .section{margin-bottom:28px}
@@ -204,7 +198,7 @@ textarea.comment-input::placeholder{color:var(--muted)}
 
 @media(max-width:640px){
   .tabs{grid-template-columns:repeat(3,1fr)}
-  .dash-kpi,.metas-banner{grid-template-columns:repeat(2,1fr)}
+  .dash-kpi{grid-template-columns:repeat(2,1fr)}
   .report-grid,.metas-grid{grid-template-columns:1fr}
   .dash-metrics,.cpr-dash{grid-template-columns:1fr}
   .week-cards{grid-template-columns:1fr}
@@ -241,7 +235,6 @@ textarea.comment-input::placeholder{color:var(--muted)}
       <button class="num-btn" onclick="pinKey('✓')" style="font-size:16px;color:var(--accent2)">✓</button>
     </div>
     <div class="login-error" id="login-error"></div>
-    <div class="login-hint">Closer:1111 · SDR:2222 · Social:3333 · G.T.:4444 · Admin:0000</div>
   </div>
 </div>
 
@@ -280,16 +273,34 @@ textarea.comment-input::placeholder{color:var(--muted)}
 
   <!-- CLOSER -->
   <div id="panel-closer" class="panel">
-    <div id="metas-closer" class="metas-banner"></div>
     <div class="progress-wrap"><div class="progress-label">Checklist</div><div class="progress-bar"><div class="progress-fill" id="prog-closer" style="width:0%"></div></div><div class="progress-count" id="prog-text-closer">0/0</div><div class="progress-pct" id="prog-pct-closer">0%</div></div>
     <div class="section"><div class="section-label">// Rotina do Dia — Pedro (Closer)</div><div id="items-closer"></div></div>
     <div class="divider"></div>
     <div class="section-label">// Relatório D+1</div>
     <div class="report-grid">
-      <div class="report-field"><label>Propostas enviadas</label><input type="number" id="closer-propostas" placeholder="0" min="0" oninput="updateMetas('closer')"></div>
-      <div class="report-field"><label>Fechamentos realizados</label><input type="number" id="closer-fechamentos" placeholder="0" min="0" oninput="updateMetas('closer')"></div>
-      <div class="report-field"><label>Valor vendido (R$)</label><input type="number" id="closer-valor" placeholder="0" min="0" oninput="updateMetas('closer')"></div>
+      <div class="report-field"><label>Propostas enviadas</label><input type="number" id="closer-propostas" placeholder="0" min="0"></div>
+      <div class="report-field"><label>Fechamentos realizados</label><input type="number" id="closer-fechamentos" placeholder="0" min="0"></div>
+      <div class="report-field"><label>Valor vendido (R$)</label><input type="number" id="closer-valor" placeholder="0" min="0"></div>
       <div class="report-field"><label>Valor pago (R$)</label><input type="number" id="closer-pago" placeholder="0" min="0"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="section-label">// Dados da Venda — Preencher a cada fechamento</div>
+    <div class="report-grid">
+      <div class="report-field"><label>Origem do Lead</label>
+        <select id="closer-origem" onchange="calcCiclo()" style="width:100%;padding:10px 14px;background:transparent;border:none;color:var(--text);font-family:'Playfair Display',serif;font-size:16px;font-weight:600;outline:none;-webkit-appearance:none;cursor:pointer">
+          <option value="">Selecione...</option>
+          <option value="SDR">SDR (ativo)</option>
+          <option value="Social Seller">Social Seller (DM)</option>
+          <option value="Indicação">Indicação</option>
+          <option value="Orgânico">Orgânico (inbound)</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
+      <div class="report-field"><label>Data do 1º contato</label><input type="date" id="closer-primeiro-contato" style="width:100%;padding:10px 14px;background:transparent;border:none;color:var(--text);font-family:'Playfair Display',serif;font-size:16px;font-weight:600;outline:none" oninput="calcCiclo()"></div>
+    </div>
+    <div class="cpr-wrap" style="margin-top:10px">
+      <div class="cpr-card"><div class="cpr-label">Ciclo de Venda</div><div class="cpr-value" id="ciclo-venda" style="font-size:18px">—</div></div>
+      <div class="cpr-card"><div class="cpr-label">Canal de Origem</div><div class="cpr-value" id="origem-display" style="font-size:14px;color:var(--accent2)">—</div></div>
     </div>
     <div class="comment-wrap"><div class="comment-label">// Observações</div><textarea class="comment-input" id="closer-comment" placeholder="Impedimentos, destaques, próximos passos..."></textarea></div>
     <button class="submit-btn" id="btn-closer" onclick="submitDay('closer')">Registrar e Sincronizar ↗</button>
@@ -297,21 +308,26 @@ textarea.comment-input::placeholder{color:var(--muted)}
 
   <!-- SDR -->
   <div id="panel-sdr" class="panel">
-    <div id="metas-sdr" class="metas-banner"></div>
     <div class="progress-wrap"><div class="progress-label">Checklist</div><div class="progress-bar"><div class="progress-fill" id="prog-sdr" style="width:0%"></div></div><div class="progress-count" id="prog-text-sdr">0/0</div><div class="progress-pct" id="prog-pct-sdr">0%</div></div>
     <div class="section"><div class="section-label">// Rotina do Dia — Rafael (SDR)</div><div id="items-sdr"></div></div>
     <div class="divider"></div>
     <div class="section-label">// Relatório D+1</div>
     <div class="report-grid">
-      <div class="report-field invest-field"><label>💰 Investimento Tráfego (R$)</label><input type="number" id="sdr-invest" placeholder="0" min="0" oninput="calcCPR('sdr')"></div>
-      <div class="report-field"><label>Leads gerados</label><input type="number" id="sdr-leads" placeholder="0" min="0" oninput="updateMetas('sdr')"></div>
-      <div class="report-field"><label>Reuniões agendadas</label><input type="number" id="sdr-agendadas" placeholder="0" min="0" oninput="calcCPR('sdr');updateMetas('sdr')"></div>
-      <div class="report-field"><label>Cancelamentos</label><input type="number" id="sdr-cancelamentos" placeholder="0" min="0" oninput="calcCPR('sdr')"></div>
-      <div class="report-field"><label>Remarcações</label><input type="number" id="sdr-remarcacoes" placeholder="0" min="0"></div>
+      <div class="report-field invest-field"><label>💰 Investimento Tráfego (R$)</label><input type="number" id="sdr-invest" placeholder="0" min="0" oninput="calcCPR('sdr');calcMQL('sdr')"></div>
+      <div class="report-field"><label>Ligações feitas</label><input type="number" id="sdr-ligacoes" placeholder="0" min="0"></div>
+      <div class="report-field"><label>Leads gerados (bruto)</label><input type="number" id="sdr-leads" placeholder="0" min="0" oninput="calcMQL('sdr')"></div>
+      <div class="report-field"><label>Leads qualificados (MQL)</label><input type="number" id="sdr-mql" placeholder="0" min="0" oninput="calcMQL('sdr')"></div>
+      <div class="report-field"><label>Leads desqualificados</label><input type="number" id="sdr-desq" placeholder="0" min="0"></div>
+      <div class="report-field"><label>Reuniões agendadas</label><input type="number" id="sdr-agendadas" placeholder="0" min="0" oninput="calcCPR('sdr')"></div>
+      <div class="report-field"><label>No-show (não avisou)</label><input type="number" id="sdr-noshow" placeholder="0" min="0" oninput="calcCPR('sdr')"></div>
+      <div class="report-field"><label>Cancelamento confirmado</label><input type="number" id="sdr-cancelamentos" placeholder="0" min="0" oninput="calcCPR('sdr')"></div>
+      <div class="report-field"><label>Remarcações</label><input type="number" id="sdr-remarcacoes" placeholder="0" min="0" oninput="calcCPR('sdr')"></div>
     </div>
     <div class="cpr-wrap">
       <div class="cpr-card"><div class="cpr-label">CPR Agendada</div><div class="cpr-value" id="cpr-ag-sdr">—</div></div>
       <div class="cpr-card"><div class="cpr-label">CPR Comparecida</div><div class="cpr-value" id="cpr-comp-sdr">—</div></div>
+      <div class="cpr-card"><div class="cpr-label">Custo por MQL</div><div class="cpr-value" id="cpm-sdr">—</div></div>
+      <div class="cpr-card"><div class="cpr-label">Tx Lead → MQL</div><div class="cpr-value" id="tx-mql-sdr">—</div></div>
     </div>
     <div class="comment-wrap"><div class="comment-label">// Observações</div><textarea class="comment-input" id="sdr-comment" placeholder="Impedimentos, destaques, próximos passos..."></textarea></div>
     <button class="submit-btn" id="btn-sdr" onclick="submitDay('sdr')">Registrar e Sincronizar ↗</button>
@@ -319,21 +335,25 @@ textarea.comment-input::placeholder{color:var(--muted)}
 
   <!-- SOCIAL -->
   <div id="panel-social" class="panel">
-    <div id="metas-social" class="metas-banner"></div>
     <div class="progress-wrap"><div class="progress-label">Checklist</div><div class="progress-bar"><div class="progress-fill" id="prog-social" style="width:0%"></div></div><div class="progress-count" id="prog-text-social">0/0</div><div class="progress-pct" id="prog-pct-social">0%</div></div>
     <div class="section"><div class="section-label">// Rotina do Dia — Igor (Social Seller)</div><div id="items-social"></div></div>
     <div class="divider"></div>
     <div class="section-label">// Relatório D+1</div>
     <div class="report-grid">
-      <div class="report-field invest-field"><label>💰 Investimento Tráfego (R$)</label><input type="number" id="social-invest" placeholder="0" min="0" oninput="calcCPR('social')"></div>
-      <div class="report-field"><label>Leads gerados</label><input type="number" id="social-leads" placeholder="0" min="0" oninput="updateMetas('social')"></div>
-      <div class="report-field"><label>Reuniões agendadas</label><input type="number" id="social-agendadas" placeholder="0" min="0" oninput="calcCPR('social');updateMetas('social')"></div>
-      <div class="report-field"><label>Cancelamentos</label><input type="number" id="social-cancelamentos" placeholder="0" min="0" oninput="calcCPR('social')"></div>
-      <div class="report-field"><label>Remarcações</label><input type="number" id="social-remarcacoes" placeholder="0" min="0"></div>
+      <div class="report-field invest-field"><label>💰 Investimento Tráfego (R$)</label><input type="number" id="social-invest" placeholder="0" min="0" oninput="calcCPR('social');calcMQL('social')"></div>
+      <div class="report-field"><label>Seguidores novos (bruto)</label><input type="number" id="social-leads" placeholder="0" min="0" oninput="calcMQL('social')"></div>
+      <div class="report-field"><label>Seguidores qualificados (MQL)</label><input type="number" id="social-mql" placeholder="0" min="0" oninput="calcMQL('social')"></div>
+      <div class="report-field"><label>Seguidores desqualificados</label><input type="number" id="social-desq" placeholder="0" min="0"></div>
+      <div class="report-field"><label>Reuniões agendadas</label><input type="number" id="social-agendadas" placeholder="0" min="0" oninput="calcCPR('social')"></div>
+      <div class="report-field"><label>No-show (não avisou)</label><input type="number" id="social-noshow" placeholder="0" min="0" oninput="calcCPR('social')"></div>
+      <div class="report-field"><label>Cancelamento confirmado</label><input type="number" id="social-cancelamentos" placeholder="0" min="0" oninput="calcCPR('social')"></div>
+      <div class="report-field"><label>Remarcações</label><input type="number" id="social-remarcacoes" placeholder="0" min="0" oninput="calcCPR('social')"></div>
     </div>
     <div class="cpr-wrap">
       <div class="cpr-card"><div class="cpr-label">CPR Agendada</div><div class="cpr-value" id="cpr-ag-social">—</div></div>
       <div class="cpr-card"><div class="cpr-label">CPR Comparecida</div><div class="cpr-value" id="cpr-comp-social">—</div></div>
+      <div class="cpr-card"><div class="cpr-label">Custo por MQL</div><div class="cpr-value" id="cpm-social">—</div></div>
+      <div class="cpr-card"><div class="cpr-label">Tx Seguidor → MQL</div><div class="cpr-value" id="tx-mql-social">—</div></div>
     </div>
     <div class="comment-wrap"><div class="comment-label">// Observações</div><textarea class="comment-input" id="social-comment" placeholder="Impedimentos, destaques, próximos passos..."></textarea></div>
     <button class="submit-btn" id="btn-social" onclick="submitDay('social')">Registrar e Sincronizar ↗</button>
@@ -373,6 +393,12 @@ textarea.comment-input::placeholder{color:var(--muted)}
       <div class="cpr-dash">
         <div class="cpr-dash-card"><div class="cpr-dash-n" id="d-cpr-ag">—</div><div class="cpr-dash-l">CPR Agendada</div></div>
         <div class="cpr-dash-card"><div class="cpr-dash-n" id="d-cpr-comp">—</div><div class="cpr-dash-l">CPR Comparecida</div></div>
+      </div>
+      <div class="cpr-dash" style="margin-bottom:16px">
+        <div class="cpr-dash-card"><div class="cpr-dash-n" id="d-mql" style="color:var(--accent2)">—</div><div class="cpr-dash-l">MQL (qualificados)</div></div>
+        <div class="cpr-dash-card"><div class="cpr-dash-n" id="d-cpm" style="color:var(--gold-lt)">—</div><div class="cpr-dash-l">Custo por MQL</div></div>
+        <div class="cpr-dash-card"><div class="cpr-dash-n" id="d-tx-mql">—</div><div class="cpr-dash-l">Tx Lead → MQL</div></div>
+        <div class="cpr-dash-card"><div class="cpr-dash-n" id="d-tx-mql-ag">—</div><div class="cpr-dash-l">Tx MQL → Agendada</div></div>
       </div>
       <div class="dash-title">Progresso do Checklist</div>
       <div id="dash-progress-hoje"><div class="no-data">Carregando...</div></div>
@@ -458,6 +484,9 @@ const LISTS={
     {id:'s6',title:'Cliente oculto realizado',sub:'Aplicar na carteira do dia'},
     {id:'s7',title:'Conteúdo diário publicado',sub:'1 story + 3 posts Effect + repost @eugkallil'},
     {id:'s8',title:'Relatório D+1 enviado ao grupo',sub:'Até 17h30'},
+    {id:'s9',title:'Ligações realizadas registradas',sub:'Preencher número total de ligações feitas'},
+    {id:'s10',title:'Leads qualificados (MQL) identificados',sub:'Separar quem tem perfil de compra confirmado'},
+    {id:'s11',title:'Leads desqualificados registrados',sub:'Marcar no CRM com motivo da desqualificação'},
   ],
   social:[
     {id:'ss1',title:'Social selling — novos e antigos seguidores',sub:'Prospectar via DM todos os dias'},
@@ -465,6 +494,11 @@ const LISTS={
     {id:'ss3',title:'GBP clientes feito',sub:'Atualizar perfis no Google'},
     {id:'ss4',title:'Cliente oculto realizado',sub:'Aplicar na carteira do dia'},
     {id:'ss5',title:'Relatório D+1 enviado ao grupo',sub:'Até 17h30'},
+    {id:'ss6',title:'Seguidores novos registrados',sub:'Total de novos seguidores do dia'},
+    {id:'ss7',title:'Seguidores qualificados (MQL) identificados',sub:'Quem tem perfil de clínica/consultório'},
+    {id:'ss8',title:'Seguidores desqualificados registrados',sub:'Fora do perfil — marcar no CRM'},
+    {id:'ss9',title:'Roleplay diário realizado',sub:'Mínimo 30 minutos — simular objeções e qualificação'},
+    {id:'ss10',title:'Acompanhou call do Pedro e fez anotações',sub:'Observar fechamento e registrar aprendizados'},
   ],
   gt:[
     {id:'g1',title:'Campanhas revisadas',sub:'Verificar todas as campanhas ativas'},
@@ -476,7 +510,7 @@ const LISTS={
     {id:'g7',title:'Health Check atualizado (sexta)',sub:'Apenas às sextas — até 18h'},
   ],
 };
-const FIELDS={closer:['propostas','fechamentos','valor','pago'],sdr:['invest','leads','agendadas','cancelamentos','remarcacoes'],social:['invest','leads','agendadas','cancelamentos','remarcacoes'],gt:['gasto','leads']};
+const FIELDS={closer:['propostas','fechamentos','valor','pago','origem','primeiro_contato'],sdr:['invest','ligacoes','leads','mql','desq','agendadas','noshow','cancelamentos','remarcacoes'],social:['invest','leads','mql','desq','agendadas','noshow','cancelamentos','remarcacoes'],gt:['gasto','leads']};
 
 // Default metas
 const META_DEFAULTS={closer:{fechamentos:3,valor:5000},sdr:{leads:10,agendadas:5},social:{leads:8,agendadas:3}};
@@ -522,7 +556,6 @@ function initApp(){
     (FIELDS[role]||[]).forEach(f=>{const el=document.getElementById(`${role}-${f}`);if(el&&rep[f]!=null)el.value=rep[f]||'';});
     const ce=document.getElementById(`${role}-comment`);if(ce&&rep.comment)ce.value=rep.comment;
     if(role==='sdr'||role==='social')calcCPR(role);
-    updateMetas(role);
   }
   setSyncStatus('idle');
   loadNotionData();
@@ -558,7 +591,6 @@ function saveMetas(){
   };
   lsSetMeta(METAS);
   showToast('✓ Metas salvas!','success');
-  ['closer','sdr','social'].forEach(r=>updateMetas(r));
   renderMetasProgress();
 }
 
@@ -572,30 +604,6 @@ function loadMetasForm(){
   document.getElementById('meta-social-agendadas').value=m.social?.agendadas||3;
 }
 
-function updateMetas(role){
-  const banner=document.getElementById(`metas-${role}`);
-  if(!banner)return;
-  const m=METAS[role];if(!m)return;
-
-  const defs={
-    closer:[{key:'fechamentos',label:'Fechamentos',el:`closer-fechamentos`},{key:'valor',label:'Valor (R$)',el:`closer-valor`}],
-    sdr:[{key:'leads',label:'Leads',el:`sdr-leads`},{key:'agendadas',label:'Agendadas',el:`sdr-agendadas`}],
-    social:[{key:'leads',label:'Leads',el:`social-leads`},{key:'agendadas',label:'Agendadas',el:`social-agendadas`}],
-  };
-  const fields=defs[role];if(!fields)return;
-
-  banner.innerHTML=fields.map(f=>{
-    const val=parseFloat(document.getElementById(f.el)?.value)||0;
-    const meta=m[f.key]||1;
-    const pct=Math.min(Math.round(val/meta*100),100);
-    const color=pct>=100?'var(--accent2)':pct>=70?'var(--gold-lt)':'var(--accent)';
-    return`<div class="meta-item">
-      <div class="meta-label">${f.label}</div>
-      <div class="meta-val" style="color:${color}">${f.key==='valor'?'R$'+val.toLocaleString('pt-BR'):val}<span style="font-size:11px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:400"> /${f.key==='valor'?'R$'+meta.toLocaleString('pt-BR'):meta}</span></div>
-      <div class="meta-progress"><div class="meta-fill" style="width:${pct}%;background:${color}"></div></div>
-    </div>`;
-  }).join('');
-}
 
 function renderMetasProgress(){
   const container=document.getElementById('metas-progress-hoje');
@@ -627,10 +635,36 @@ function calcCPR(role){
   const inv=parseFloat(document.getElementById(`${role}-invest`)?.value)||0;
   const ag=parseFloat(document.getElementById(`${role}-agendadas`)?.value)||0;
   const cancel=parseFloat(document.getElementById(`${role}-cancelamentos`)?.value)||0;
-  const comp=ag-cancel;
+  const noshow_r=parseFloat(document.getElementById(`${role}-noshow`)?.value)||0;
+  const comp=ag-cancel-noshow_r;
   const fmt=v=>v>0?'R$'+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
   document.getElementById(`cpr-ag-${role}`).textContent=fmt((inv>0&&ag>0)?inv/ag:0);
   document.getElementById(`cpr-comp-${role}`).textContent=fmt((inv>0&&comp>0)?inv/comp:0);
+}
+
+function calcCiclo(){
+  const d=document.getElementById('closer-primeiro-contato')?.value;
+  const origem=document.getElementById('closer-origem')?.value||'';
+  const origemEl=document.getElementById('origem-display');
+  const cicloEl=document.getElementById('ciclo-venda');
+  if(origemEl)origemEl.textContent=origem||'—';
+  if(!d){if(cicloEl)cicloEl.textContent='—';return;}
+  const hoje=new Date();hoje.setHours(0,0,0,0);
+  const first=new Date(d);first.setHours(0,0,0,0);
+  const dias=Math.round((hoje-first)/(1000*60*60*24));
+  if(cicloEl)cicloEl.textContent=dias>=0?dias+' dias':'—';
+}
+
+function calcMQL(role){
+  const inv=parseFloat(document.getElementById(`${role}-invest`)?.value)||0;
+  const leads=parseFloat(document.getElementById(`${role}-leads`)?.value)||0;
+  const mql=parseFloat(document.getElementById(`${role}-mql`)?.value)||0;
+  const fmt=v=>v>0?'R$'+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+  const fmtPct=v=>v>0?(v*100).toFixed(1)+'%':'—';
+  const cpmEl=document.getElementById(`cpm-${role}`);
+  const txEl=document.getElementById(`tx-mql-${role}`);
+  if(cpmEl)cpmEl.textContent=fmt((inv>0&&mql>0)?inv/mql:0);
+  if(txEl)txEl.textContent=fmtPct((leads>0&&mql>0)?mql/leads:0);
 }
 
 // ── TABS ──────────────────────────────────────────────────────────────────────
@@ -670,18 +704,31 @@ async function submitDay(role){
   st.report.submittedAt=new Date().toISOString();
   lsSet(role,st);
   const invest=st.report.invest||0,ag=st.report.agendadas||0,cancel=st.report.cancelamentos||0,comp=ag-cancel;
+  const mql=st.report.mql||0,leads=st.report.leads||0;
+  const noshow=st.report.noshow||0;
+  const primeiroContato=document.getElementById('closer-primeiro-contato')?.value||'';
+  const origemLead=document.getElementById('closer-origem')?.value||'';
+  const hoje=new Date();hoje.setHours(0,0,0,0);
+  const cicloVenda=primeiroContato?Math.round((hoje-new Date(primeiroContato))/(1000*60*60*24)):null;
   const payload={
     nome:ROLE_LABELS[role],data:todayKey(),papel:ROLE_LABELS[role],
     checklist_concluido:st.report.checkedCount,checklist_total:st.report.totalCount,
-    leads_gerados:st.report.leads||0,reunioes_agendadas:ag,
-    remarcacoes:st.report.remarcacoes||0,cancelamentos:cancel,
+    leads_gerados:leads,mql:mql,leads_desqualificados:st.report.desq||0,
+    ligacoes_feitas:st.report.ligacoes||0,
+    reunioes_agendadas:ag,
+    remarcacoes:st.report.remarcacoes||0,no_show:noshow,cancelamentos:cancel,
     propostas_enviadas:st.report.propostas||0,fechamentos:st.report.fechamentos||0,
     valor_vendido:st.report.valor||0,valor_pago:st.report.pago||0,
     gasto_ads:st.report.gasto||0,leads_ads:role==='gt'?(st.report.leads||0):0,
     observacoes:st.report.comment||'',
     investimento_em_trafego:invest,
+    origem_do_lead:origemLead,
+    ciclo_de_venda:cicloVenda,
+    data_primeiro_contato:primeiroContato,
     cpr_agendada:(invest>0&&ag>0)?Math.round(invest/ag*100)/100:0,
-    cpr_comparecida:(invest>0&&comp>0)?Math.round(invest/comp*100)/100:0
+    cpr_comparecida:(invest>0&&comp>0)?Math.round(invest/comp*100)/100:0,
+    custo_por_mql:(invest>0&&mql>0)?Math.round(invest/mql*100)/100:0,
+    tx_lead_mql:(leads>0&&mql>0)?Math.round(mql/leads*1000)/10:0
   };
   try{
     // Send to Notion + Discord in parallel
@@ -715,7 +762,7 @@ function fallbackToLocal(){
   ['closer','sdr','social','gt'].forEach(role=>{
     const st=lsGet(role);
     if(st.report?.submittedAt){
-      notionCache.push({data:todayKey(),papel:ROLE_LABELS[role],leads_gerados:st.report.leads||0,reunioes_agendadas:st.report.agendadas||0,cancelamentos:st.report.cancelamentos||0,remarcacoes:st.report.remarcacoes||0,propostas_enviadas:st.report.propostas||0,fechamentos:st.report.fechamentos||0,valor_vendido:st.report.valor||0,valor_pago:st.report.pago||0,gasto_ads:st.report.gasto||0,investimento_em_trafego:st.report.invest||0,cpr_agendada:st.report.cpr_agendada||0,cpr_comparecida:st.report.cpr_comparecida||0,checklist_concluido:st.report.checkedCount||0,checklist_total:LISTS[role].length});
+      notionCache.push({data:todayKey(),papel:ROLE_LABELS[role],leads_gerados:st.report.leads||0,reunioes_agendadas:st.report.agendadas||0,no_show:st.report.noshow||0,cancelamentos:st.report.cancelamentos||0,remarcacoes:st.report.remarcacoes||0,propostas_enviadas:st.report.propostas||0,fechamentos:st.report.fechamentos||0,valor_vendido:st.report.valor||0,valor_pago:st.report.pago||0,gasto_ads:st.report.gasto||0,investimento_em_trafego:st.report.invest||0,cpr_agendada:st.report.cpr_agendada||0,cpr_comparecida:st.report.cpr_comparecida||0,checklist_concluido:st.report.checkedCount||0,checklist_total:LISTS[role].length});
     }
   });
   renderDashToday();
@@ -724,15 +771,30 @@ function fallbackToLocal(){
 // ── DASHBOARD TODAY ───────────────────────────────────────────────────────────
 function renderDashToday(){
   const today=notionCache.filter(r=>r.data===todayKey());
-  let ag=0,fech=0,leads=0,valor=0,invest=0,cancel=0;
-  today.forEach(r=>{ag+=(r.reunioes_agendadas||0);fech+=(r.fechamentos||0);leads+=(r.leads_gerados||0);valor+=(r.valor_vendido||0);invest+=(r.investimento_em_trafego||0);cancel+=(r.cancelamentos||0);});
+  let ag=0,fech=0,leads=0,valor=0,invest=0,cancel=0,mql=0,desq=0,lig=0,noshow=0;
+  today.forEach(r=>{
+    ag+=(r.reunioes_agendadas||0);fech+=(r.fechamentos||0);
+    leads+=(r.leads_gerados||0);valor+=(r.valor_vendido||0);
+    invest+=(r.investimento_em_trafego||0);cancel+=(r.cancelamentos||0);
+    mql+=(r.mql||0);desq+=(r.leads_desqualificados||0);lig+=(r.ligacoes_feitas||0);noshow+=(r.no_show||0);
+  });
   document.getElementById('d-agendadas').textContent=ag||'0';
   document.getElementById('d-fechamentos').textContent=fech||'0';
   document.getElementById('d-leads').textContent=leads||'0';
   document.getElementById('d-valor').textContent='R$'+valor.toLocaleString('pt-BR');
   const fmt=v=>v>0?'R$'+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+  const fmtPct=v=>v>0?(v*100).toFixed(1)+'%':'—';
   document.getElementById('d-cpr-ag').textContent=fmt((invest>0&&ag>0)?invest/ag:0);
-  document.getElementById('d-cpr-comp').textContent=fmt((invest>0&&(ag-cancel)>0)?invest/(ag-cancel):0);
+  document.getElementById('d-cpr-comp').textContent=fmt((invest>0&&(ag-cancel-noshow)>0)?invest/(ag-cancel-noshow):0);
+  // MQL cards
+  const mqlN=document.getElementById('d-mql');
+  const cpmN=document.getElementById('d-cpm');
+  const txMqlN=document.getElementById('d-tx-mql');
+  const txMqlAgN=document.getElementById('d-tx-mql-ag');
+  if(mqlN)mqlN.textContent=mql||'0';
+  if(cpmN)cpmN.textContent=fmt((invest>0&&mql>0)?invest/mql:0);
+  if(txMqlN)txMqlN.textContent=fmtPct((leads>0&&mql>0)?mql/leads:0);
+  if(txMqlAgN)txMqlAgN.textContent=fmtPct((mql>0&&ag>0)?ag/mql:0);
   const rows=['closer','sdr','social','gt'].map(role=>{
     const st=lsGet(role);const ch=st.checked||{};
     const done=LISTS[role].filter(i=>ch[i.id]).length,total=LISTS[role].length,pct=total?Math.round(done/total*100):0;
@@ -752,17 +814,20 @@ function renderSemana(){
   const weekDates=[];for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);weekDates.push(d.toISOString().split('T')[0]);}
   const wd=notionCache.filter(r=>weekDates.includes(r.data));
   if(!wd.length){container.innerHTML='<div class="no-data">Nenhum dado esta semana</div>';return;}
-  let tL=0,tAg=0,tF=0,tV=0,tG=0,tI=0,tC=0;const barByDate={};
-  wd.forEach(r=>{tL+=r.leads_gerados||0;tAg+=r.reunioes_agendadas||0;tF+=r.fechamentos||0;tV+=r.valor_vendido||0;tG+=r.gasto_ads||0;tI+=r.investimento_em_trafego||0;tC+=r.cancelamentos||0;barByDate[r.data]=(barByDate[r.data]||0)+(r.fechamentos||0);});
+  let tL=0,tAg=0,tF=0,tV=0,tG=0,tI=0,tC=0,tMQL=0,tDesq=0;const barByDate={};
+  wd.forEach(r=>{tL+=r.leads_gerados||0;tAg+=r.reunioes_agendadas||0;tF+=r.fechamentos||0;tV+=r.valor_vendido||0;tG+=r.gasto_ads||0;tI+=r.investimento_em_trafego||0;tC+=r.cancelamentos||0;tMQL+=r.mql||0;tDesq+=r.leads_desqualificados||0;barByDate[r.data]=(barByDate[r.data]||0)+(r.fechamentos||0);});
   const days=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
   const barData=weekDates.map(d=>({label:days[new Date(d+'T12:00:00').getDay()],val:barByDate[d]||0,tip:`${days[new Date(d+'T12:00:00').getDay()]}: ${barByDate[d]||0} fechamentos`}));
   const maxF=Math.max(...barData.map(b=>b.val),1);
   const dCount=[...new Set(wd.map(r=>r.data))].length||1;
   const fmt=v=>v>0?'R$'+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
-  container.innerHTML=`<div class="cpr-dash" style="margin-bottom:20px"><div class="cpr-dash-card"><div class="cpr-dash-n">${fmt((tI>0&&tAg>0)?tI/tAg:0)}</div><div class="cpr-dash-l">CPR Agendada (semana)</div></div><div class="cpr-dash-card"><div class="cpr-dash-n">${fmt((tI>0&&(tAg-tC)>0)?tI/(tAg-tC):0)}</div><div class="cpr-dash-l">CPR Comparecida (semana)</div></div></div>
+  container.innerHTML=`<div class="cpr-dash" style="margin-bottom:20px"><div class="cpr-dash-card"><div class="cpr-dash-n">${fmt((tI>0&&tAg>0)?tI/tAg:0)}</div><div class="cpr-dash-l">CPR Agendada (semana)</div></div><div class="cpr-dash-card"><div class="cpr-dash-n">${fmt((tI>0&&(tAg-tC)>0)?tI/(tAg-tC):0)}</div><div class="cpr-dash-l">CPR Comparecida (semana)</div></div><div class="cpr-dash-card"><div class="cpr-dash-n" style="color:var(--accent2)">${tMQL}</div><div class="cpr-dash-l">MQL (semana)</div></div><div class="cpr-dash-card"><div class="cpr-dash-n">${fmt((tI>0&&tMQL>0)?tI/tMQL:0)}</div><div class="cpr-dash-l">Custo por MQL</div></div></div>
     <div class="week-cards"><div class="week-card"><div class="week-card-title">Resultados</div>
-      <div class="week-stat"><span class="week-stat-l">Leads</span><span class="week-stat-n" style="color:#7aaddd">${tL}</span></div>
+      <div class="week-stat"><span class="week-stat-l">Leads brutos</span><span class="week-stat-n" style="color:#7aaddd">${tL}</span></div>
+      <div class="week-stat"><span class="week-stat-l">MQL</span><span class="week-stat-n" style="color:var(--accent2)">${tMQL}</span></div>
+      <div class="week-stat"><span class="week-stat-l">Tx Lead→MQL</span><span class="week-stat-n">${tL>0&&tMQL>0?(tMQL/tL*100).toFixed(1)+'%':'—'}</span></div>
       <div class="week-stat"><span class="week-stat-l">Agendadas</span><span class="week-stat-n" style="color:var(--accent)">${tAg}</span></div>
+      <div class="week-stat"><span class="week-stat-l">Tx MQL→Ag.</span><span class="week-stat-n">${tMQL>0&&tAg>0?(tAg/tMQL*100).toFixed(1)+'%':'—'}</span></div>
       <div class="week-stat"><span class="week-stat-l">Fechamentos</span><span class="week-stat-n" style="color:var(--accent2)">${tF}</span></div>
       <div class="week-stat"><span class="week-stat-l">Valor</span><span class="week-stat-n" style="color:var(--gold-lt)">R$${tV.toLocaleString('pt-BR')}</span></div>
       <div class="week-stat"><span class="week-stat-l">Investimento</span><span class="week-stat-n" style="color:var(--muted)">R$${tI.toLocaleString('pt-BR')}</span></div>
@@ -779,28 +844,30 @@ function renderMes(){
   const now=new Date(),cm=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
   const md=notionCache.filter(r=>r.data?.startsWith(cm));
   if(!md.length){container.innerHTML='<div class="no-data">Nenhum dado este mês</div>';return;}
-  let tL=0,tAg=0,tF=0,tV=0,tG=0,tI=0,tC=0;const barByDate={};
-  md.forEach(r=>{tL+=r.leads_gerados||0;tAg+=r.reunioes_agendadas||0;tF+=r.fechamentos||0;tV+=r.valor_vendido||0;tG+=r.gasto_ads||0;tI+=r.investimento_em_trafego||0;tC+=r.cancelamentos||0;barByDate[r.data]=(barByDate[r.data]||0)+(r.fechamentos||0)+(r.reunioes_agendadas||0);});
+  let tL=0,tAg=0,tF=0,tV=0,tG=0,tI=0,tC=0,tMQL=0,tDesq=0;const barByDate={};
+  md.forEach(r=>{tL+=r.leads_gerados||0;tAg+=r.reunioes_agendadas||0;tF+=r.fechamentos||0;tV+=r.valor_vendido||0;tG+=r.gasto_ads||0;tI+=r.investimento_em_trafego||0;tC+=r.cancelamentos||0;tMQL+=r.mql||0;tDesq+=r.leads_desqualificados||0;barByDate[r.data]=(barByDate[r.data]||0)+(r.fechamentos||0)+(r.reunioes_agendadas||0);});
   const allDays=[...new Set(md.map(r=>r.data))].sort();
   const barData=allDays.map(d=>({label:String(parseInt(d.split('-')[2])),val:barByDate[d]||0,tip:`Dia ${parseInt(d.split('-')[2])}: ${barByDate[d]||0} ações`}));
   const maxV=Math.max(...barData.map(b=>b.val),1);
   const mn=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const dCount=allDays.length||1;
   const fmt=v=>v>0?'R$'+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
-  container.innerHTML=`<div class="cpr-dash" style="margin-bottom:20px"><div class="cpr-dash-card"><div class="cpr-dash-n">${fmt((tI>0&&tAg>0)?tI/tAg:0)}</div><div class="cpr-dash-l">CPR Agendada (${mn[now.getMonth()]})</div></div><div class="cpr-dash-card"><div class="cpr-dash-n">${fmt((tI>0&&(tAg-tC)>0)?tI/(tAg-tC):0)}</div><div class="cpr-dash-l">CPR Comparecida (${mn[now.getMonth()]})</div></div></div>
+  container.innerHTML=`<div class="cpr-dash" style="margin-bottom:20px"><div class="cpr-dash-card"><div class="cpr-dash-n">${fmt((tI>0&&tAg>0)?tI/tAg:0)}</div><div class="cpr-dash-l">CPR Agendada (${mn[now.getMonth()]})</div></div><div class="cpr-dash-card"><div class="cpr-dash-n">${fmt((tI>0&&(tAg-tC)>0)?tI/(tAg-tC):0)}</div><div class="cpr-dash-l">CPR Comparecida (${mn[now.getMonth()]})</div></div><div class="cpr-dash-card"><div class="cpr-dash-n" style="color:var(--accent2)">${tMQL}</div><div class="cpr-dash-l">MQL total</div></div><div class="cpr-dash-card"><div class="cpr-dash-n">${fmt((tI>0&&tMQL>0)?tI/tMQL:0)}</div><div class="cpr-dash-l">Custo por MQL</div></div></div>
     <div class="dash-kpi">
-      <div class="kpi-card"><div class="kpi-n" style="color:#7aaddd">${tL}</div><div class="kpi-l">Leads</div></div>
+      <div class="kpi-card"><div class="kpi-n" style="color:#7aaddd">${tL}</div><div class="kpi-l">Leads brutos</div></div>
+      <div class="kpi-card"><div class="kpi-n" style="color:var(--accent2)">${tMQL}</div><div class="kpi-l">MQL</div></div>
       <div class="kpi-card"><div class="kpi-n" style="color:var(--accent)">${tAg}</div><div class="kpi-l">Agendadas</div></div>
-      <div class="kpi-card"><div class="kpi-n" style="color:var(--accent2)">${tF}</div><div class="kpi-l">Fechamentos</div></div>
       <div class="kpi-card"><div class="kpi-n" style="color:var(--gold-lt)">R$${(tV/1000).toFixed(1)}k</div><div class="kpi-l">Vendido</div></div>
     </div>
     <div class="month-chart" style="height:100px">${barData.map(b=>`<div class="mbar" style="height:${Math.round((b.val/maxV)*100)+'%'};background:linear-gradient(180deg,var(--accent),var(--accent2))" data-tip="${b.tip}"></div>`).join('')}</div>
     <div class="chart-labels">${barData.map(b=>`<div class="chart-label">${b.label}</div>`).join('')}</div>
-    <div class="dash-title">Médias mensais</div>
+    <div class="dash-title">Médias e taxas mensais</div>
     <div class="dash-metrics">
       <div class="dash-metric"><div class="dash-metric-n" style="color:#7aaddd">${(tL/dCount).toFixed(1)}</div><div class="dash-metric-l">Leads/dia</div></div>
+      <div class="dash-metric"><div class="dash-metric-n" style="color:var(--accent2)">${tL>0&&tMQL>0?(tMQL/tL*100).toFixed(1)+'%':'—'}</div><div class="dash-metric-l">Tx Lead→MQL</div></div>
       <div class="dash-metric"><div class="dash-metric-n" style="color:var(--accent)">${(tAg/dCount).toFixed(1)}</div><div class="dash-metric-l">Agendadas/dia</div></div>
       <div class="dash-metric"><div class="dash-metric-n" style="color:var(--accent2)">${(tF/dCount).toFixed(1)}</div><div class="dash-metric-l">Fechamentos/dia</div></div>
+      <div class="dash-metric"><div class="dash-metric-n" style="color:var(--gold-lt)">${tMQL>0&&tF>0?(tF/tMQL*100).toFixed(1)+'%':'—'}</div><div class="dash-metric-l">Tx MQL→Fech.</div></div>
       <div class="dash-metric"><div class="dash-metric-n" style="color:var(--muted)">R$${(tG/dCount).toFixed(0)}</div><div class="dash-metric-l">Gasto ads/dia</div></div>
     </div>`;
 }
@@ -824,8 +891,8 @@ function renderHistorico(){
   const days=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],mn=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const fmt=d=>{const dt=new Date(d+'T12:00:00');return`${days[dt.getDay()]}, ${dt.getDate()} ${mn[dt.getMonth()]}`;};
   const fmtR=v=>v>0?'R$'+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
-  let html=`<div class="hist-table-wrap"><table class="hist-table"><thead><tr><th>Data</th><th>Papel</th><th>Leads</th><th>Agendadas</th><th>Cancel</th><th>Fechamentos</th><th>Valor</th><th>Investimento</th><th>CPR Ag.</th><th>CPR Comp.</th><th>Check</th></tr></thead><tbody>`;
-  rows.forEach(r=>{const pct=r.checklist_total?Math.round((r.checklist_concluido/r.checklist_total)*100):0;html+=`<tr><td>${fmt(r.data)}</td><td>${r.papel||'—'}</td><td class="num" style="color:#7aaddd">${r.leads_gerados??'—'}</td><td class="num" style="color:var(--accent)">${r.reunioes_agendadas??'—'}</td><td class="num" style="color:var(--red)">${r.cancelamentos??'—'}</td><td class="num" style="color:var(--accent2)">${r.fechamentos??'—'}</td><td class="num" style="color:var(--gold-lt)">${r.valor_vendido?'R$'+r.valor_vendido.toLocaleString('pt-BR'):'—'}</td><td class="num" style="color:var(--muted)">${r.investimento_em_trafego?'R$'+r.investimento_em_trafego.toLocaleString('pt-BR'):'—'}</td><td class="num" style="color:var(--gold-lt)">${fmtR(r.cpr_agendada)}</td><td class="num" style="color:var(--gold-lt)">${fmtR(r.cpr_comparecida)}</td><td class="num">${r.checklist_concluido||0}/${r.checklist_total||0} (${pct}%)</td></tr>`;});
+  let html=`<div class="hist-table-wrap"><table class="hist-table"><thead><tr><th>Data</th><th>Papel</th><th>Leads</th><th>MQL</th><th>Tx MQL</th><th>Agendadas</th><th>Cancel</th><th>Fechamentos</th><th>Valor</th><th>Invest.</th><th>CPR Ag.</th><th>Custo MQL</th><th>Check</th></tr></thead><tbody>`;
+  rows.forEach(r=>{const pct=r.checklist_total?Math.round((r.checklist_concluido/r.checklist_total)*100):0;const txMql=(r.leads_gerados>0&&r.mql>0)?(r.mql/r.leads_gerados*100).toFixed(0)+'%':'—';const custoMql=(r.investimento_em_trafego>0&&r.mql>0)?'R$'+Math.round(r.investimento_em_trafego/r.mql).toLocaleString('pt-BR'):'—';html+=`<tr><td>${fmt(r.data)}</td><td>${r.papel||'—'}</td><td class="num" style="color:#7aaddd">${r.leads_gerados??'—'}</td><td class="num" style="color:var(--accent2)">${r.mql??'—'}</td><td class="num">${txMql}</td><td class="num" style="color:var(--accent)">${r.reunioes_agendadas??'—'}</td><td class="num" style="color:var(--red)">${r.cancelamentos??'—'}</td><td class="num" style="color:var(--accent2)">${r.fechamentos??'—'}</td><td class="num" style="color:var(--gold-lt)">${r.valor_vendido?'R$'+r.valor_vendido.toLocaleString('pt-BR'):'—'}</td><td class="num" style="color:var(--muted)">${r.investimento_em_trafego?'R$'+r.investimento_em_trafego.toLocaleString('pt-BR'):'—'}</td><td class="num" style="color:var(--gold-lt)">${fmtR(r.cpr_agendada)}</td><td class="num" style="color:var(--gold-lt)">${custoMql}</td><td class="num">${r.checklist_concluido||0}/${r.checklist_total||0} (${pct}%)</td></tr>`;});
   html+='</tbody></table></div>';container.innerHTML=html;
 }
 
